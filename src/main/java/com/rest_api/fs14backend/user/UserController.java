@@ -48,7 +48,7 @@ public class UserController {
   @PostMapping("/signup")
   public User signup(@RequestBody User user) {
 
-    User newUser = new User(user.getUsername(), passwordEncoder.encode(user.getPassword()));
+    User newUser = new User(user.getUsername(), passwordEncoder.encode(user.getPassword()), User.Role.USER);
     userRepository.save(newUser);
 
     return newUser;
