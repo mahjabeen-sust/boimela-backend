@@ -31,12 +31,12 @@ public class CategoryController {
   
   
   @DeleteMapping(value = "/{id}")
-  public void deleteBook(@PathVariable UUID id) {
+  public void deleteCategory(@PathVariable UUID id) throws Exception {
     categoryService.deleteCategory(id);
   }
   
   @PutMapping(value = "/{id}")
-  public void updateBook(@PathVariable UUID id, @RequestBody Category category) {
+  public void updateCategory(@PathVariable UUID id, @RequestBody Category category) throws Exception {
     categoryService.updateCategory(id, category);
   }
   

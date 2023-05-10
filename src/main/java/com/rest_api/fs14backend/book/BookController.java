@@ -16,7 +16,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/v1/books")
 public class BookController {
-  private final BookService bookService;
+  @Autowired
+  private BookService bookService;
   
   @Autowired
   private CategoryService categoryService;
@@ -24,9 +25,7 @@ public class BookController {
   @Autowired
   private BookMapper bookMapper;
 
-  public BookController( BookService bookService) {
-    this.bookService = bookService;
-  }
+  
 
   @GetMapping("/")
   public List<Book> getBooks() {

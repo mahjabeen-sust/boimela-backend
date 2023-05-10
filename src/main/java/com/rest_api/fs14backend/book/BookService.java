@@ -1,6 +1,7 @@
 package com.rest_api.fs14backend.book;
 
 import com.rest_api.fs14backend.todo.Todo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,11 +10,10 @@ import java.util.Optional;
 
 @Service
 public class BookService {
-  private final BookRepository bookRepository;
+  @Autowired
+  private  BookRepository bookRepository;
 
-  public BookService(BookRepository bookRepository) {
-    this.bookRepository = bookRepository;
-  }
+  
 
   public List<Book> getAllBooks() {
     return bookRepository.findAll();
