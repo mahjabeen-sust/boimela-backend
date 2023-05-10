@@ -40,7 +40,7 @@ public class CategoryService {
     Book book = bookRepository.findAll()
                                       .stream()
                                       .filter(
-                                          bookToBeDeleted -> Objects.equals(bookToBeDeleted.getCategory().getId(), categoryId))
+                                          bookMatchedWithCategory -> Objects.equals(bookMatchedWithCategory.getCategory().getId(), categoryId))
                                       .findFirst()
                                       .orElse(null);
     
