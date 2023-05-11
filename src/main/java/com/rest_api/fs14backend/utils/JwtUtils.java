@@ -7,6 +7,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+//dotenv
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +17,13 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtils {
-  final String secret = "ThisIsAMuchLongerPasswordOhBoysDoINeedMoreCharacters";
+  //final String secret = "ThisIsAMuchLongerPasswordOhBoysDoINeedMoreCharacters";
+  
+  Dotenv dotenv = Dotenv.load();
+  private final String secret = dotenv.get("JWTSECRET");
+  
+  
+  
 
   // secret variable to be moved to .env
   public String generateToken(User user) {
@@ -23,11 +32,13 @@ public class JwtUtils {
     claims.put("username", user.getUsername());
     // add role claim
     claims.put("role", user.getRole());
+    
 
     return createToken(claims, user.getUsername());
   }
 
   private String createToken(Map<String, Object> claims, String subject) {
+    
     return Jwts
       .builder()
       .setClaims(claims)
