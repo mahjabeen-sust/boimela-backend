@@ -12,20 +12,19 @@ import java.util.UUID;
 @RequestMapping("api/v1/categories")
 public class CategoryController {
 
-  @Autowired
-  private CategoryRepository repo;
   
   @Autowired
   private CategoryService categoryService;
 
   @PostMapping("/")
-  public Category createOne(@RequestBody Category category) {
-    return repo.save(category);
+  public void createOne(@RequestBody Category category) throws Exception {
+    categoryService.createOne(category);
+    //return repo.save(category);
   }
   
   @GetMapping("/")
   public List<Category> getAllCategories(){
-    return repo.findAll();
+    return categoryService.getAllCategories();
   }
   
   

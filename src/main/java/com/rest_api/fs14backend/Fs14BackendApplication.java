@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Fs14BackendApplication {
 
 	public static void main(String[] args) {
+		
 		SpringApplication.run(Fs14BackendApplication.class, args);
 	}
+	
 
 }

@@ -18,34 +18,37 @@ public class BookService {
   public List<Book> getAllBooks() {
     return bookRepository.findAll();
   }
-  public void addOneBook(Book book) {
-    bookRepository.save(book);
-  }
   
   public Book createOne(Book book) {
     return bookRepository.save(book);
   }
 
-  public Optional<Book> getBookById(Long isbn) {
+  public Optional<Book> findById(Long isbn) {
     return bookRepository.findBookByISBN(isbn);
   }
 
-  public void deleteBook(Long isbn) {
+  public void deleteBook(Long isbn) throws Exception {
     Optional<Book> bookToDelete = bookRepository.findBookByISBN(isbn);
     if (bookToDelete.isPresent()) {
       bookRepository.delete(bookToDelete.get());
     } else {
-      throw new IllegalStateException("Book with " + isbn + " not found");
+      throw new IllegalStateException("Book with isbn " + isbn + " not found");
     }
   }
 
+  //update with all properties and (not implemented yet possible null values)
   @Transactional
-  public void updateBook(Long isbn, Book newBook) {
+  public void updateBook(Long isbn, Book newBook) throws Exception {
     Optional<Book> bookToEdit = bookRepository.findBookByISBN(isbn);
     if (bookToEdit.isPresent()) {
-      bookToEdit.get().setDescription(newBook.getDescription());
+      bookToEdit.get().setCategory(newBook.getCategory());
       bookToEdit.get().setTitle(newBook.getTitle());
+      bookToEdit.get().setDescription(newBook.getDescription());
+      bookToEdit.get().setPublishedDate(newBook.getPublishedDate());
       bookToEdit.get().setPublishers(newBook.getPublishers());
+      bookToEdit.get().setStatus(newBook.getStatus());
+    }else{
+      throw new Exception("Book does not exist!");
     }
   }
 }

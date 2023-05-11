@@ -34,11 +34,11 @@ public class BookController {
 
   @GetMapping(value = "/{isbn}")
   public Optional<Book> getBookByIsbn(@PathVariable Long isbn) {
-    return bookService.getBookById(isbn);
+    return bookService.findById(isbn);
   }
 
   @DeleteMapping(value = "/{isbn}")
-  public void deleteBook(@PathVariable Long isbn) {
+  public void deleteBook(@PathVariable Long isbn) throws Exception {
     bookService.deleteBook(isbn);
   }
 
@@ -69,8 +69,17 @@ public class BookController {
      "publishers":"QP"
   }*/
   
+  /*@PutMapping(value = "/{isbn}")
+  public void updateBook(@PathVariable Long isbn, @RequestBody Book book) throws Exception {
+    bookService.updateBook(isbn, book);
+  }*/
+  
   @PutMapping(value = "/{isbn}")
-  public void updateBook(@PathVariable Long isbn, @RequestBody Book book) {
+  public void updateBook(@PathVariable Long isbn, @RequestBody BookDTO bookDTO) throws Exception {
+    UUID categoryId = bookDTO.getCategoryId();
+    Category category = categoryService.findById(categoryId);
+    
+    Book book = bookMapper.newBook(bookDTO, category);
     bookService.updateBook(isbn, book);
   }
 }
