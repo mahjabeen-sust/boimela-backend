@@ -1,6 +1,8 @@
 package com.rest_api.fs14backend.book;
 
 
+import com.rest_api.fs14backend.author.Author;
+import com.rest_api.fs14backend.author.AuthorService;
 import com.rest_api.fs14backend.category.Category;
 import com.rest_api.fs14backend.category.CategoryService;
 import com.rest_api.fs14backend.todo.Todo;
@@ -9,6 +11,7 @@ import com.rest_api.fs14backend.todo.TodoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,6 +24,9 @@ public class BookController {
   
   @Autowired
   private CategoryService categoryService;
+  
+  @Autowired
+  private AuthorService authorService;
   
   @Autowired
   private BookMapper bookMapper;
@@ -51,9 +57,13 @@ public class BookController {
   @PostMapping("/")
   public Book createOne(@RequestBody BookDTO bookDTO) {
     UUID categoryId = bookDTO.getCategoryId();
+    List<UUID> authorIdList = bookDTO.getAuthorIdList();
     Category category = categoryService.findById(categoryId);
+    //List<B> bList = aList.stream().map(A::getB).collect(Collectors.toList());
+    List<Author> authorList = new ArrayList<>();
+    authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
     
-    Book book = bookMapper.newBook(bookDTO, category);
+    Book book = bookMapper.newBook(bookDTO, category, authorList);
     
     return bookService.createOne(book);
   }
@@ -78,8 +88,11 @@ public class BookController {
   public void updateBook(@PathVariable Long isbn, @RequestBody BookDTO bookDTO) throws Exception {
     UUID categoryId = bookDTO.getCategoryId();
     Category category = categoryService.findById(categoryId);
+    List<UUID> authorIdList = bookDTO.getAuthorIdList();
+    List<Author> authorList = new ArrayList<>();
+    authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
     
-    Book book = bookMapper.newBook(bookDTO, category);
+    Book book = bookMapper.newBook(bookDTO, category, authorList);
     bookService.updateBook(isbn, book);
   }
 }

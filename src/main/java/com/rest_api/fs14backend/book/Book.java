@@ -1,11 +1,13 @@
 package com.rest_api.fs14backend.book;
 
+import com.rest_api.fs14backend.author.Author;
 import com.rest_api.fs14backend.category.Category;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -57,13 +59,17 @@ public class Book {
   @ManyToOne( optional = false)
   private Category category;
 
+  @ManyToMany
+  private List<Author> authorList;
+  
   public Book(long ISBN,
               String title,
               LocalDate publishedDate,
               String description,
               Status status,
               String publishers,
-              Category category
+              Category category,
+              List<Author> authorList
 
 //              Author author
   ) {
@@ -74,7 +80,7 @@ public class Book {
     this.status = status;
     this.publishers = publishers;
     this.category = category;
-//    this.author = author;
+    this.authorList = authorList;
   
   }
 
