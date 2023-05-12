@@ -8,6 +8,7 @@ import com.rest_api.fs14backend.book.BookRepository;
 import com.rest_api.fs14backend.category.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 //
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +56,7 @@ public class AuthorService {
   }
   
   //not working
+  @Transactional
   public void updateAuthor(UUID id, Author newAuthor) throws Exception {
     Optional<Author> authorToEdit = authorRepository.findAuthorById(id);
     System.out.println("authorToEdit : "+authorToEdit);
