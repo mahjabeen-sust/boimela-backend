@@ -51,7 +51,7 @@ public class Book {
 //  @ManyToOne(optional = false)
 //  private  author;
 
-  enum Status {
+  public enum Status {
     BORROWED,
     AVAILABLE
   }

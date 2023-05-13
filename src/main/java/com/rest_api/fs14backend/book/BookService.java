@@ -26,6 +26,8 @@ public class BookService {
   public Optional<Book> findById(Long isbn) {
     return bookRepository.findBookByISBN(isbn);
   }
+  
+  public Book findForLoan(Long isbn){return bookRepository.findForLoan(isbn);}
 
   public void deleteBook(Long isbn) throws Exception {
     Optional<Book> bookToDelete = bookRepository.findBookByISBN(isbn);
@@ -50,5 +52,10 @@ public class BookService {
     }else{
       throw new Exception("Book does not exist!");
     }
+  }
+  
+  @Transactional
+  public void changeStatusForLoan(Book bookToLoan, Book.Status status){
+    bookToLoan.setStatus(status);
   }
 }
