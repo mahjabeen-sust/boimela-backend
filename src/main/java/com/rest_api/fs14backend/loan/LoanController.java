@@ -33,7 +33,7 @@ public class LoanController {
 	@Autowired
 	private LoanMapper loanMapper;
 	
-	@GetMapping("/")
+	@GetMapping("/all")
 	public List<Loan> getLoans() {
 		return loanService.getAllLoans();
 	}

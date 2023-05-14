@@ -44,6 +44,7 @@ public class SecurityConfig {
       .permitAll()
           .requestMatchers("/api/v1/*").permitAll()
           .requestMatchers("GET", "/users").hasRole("ADMIN")
+          .requestMatchers("GET", "/api/v1/loan/all").hasRole("ADMIN")
           .anyRequest().authenticated()
           
       .and()
