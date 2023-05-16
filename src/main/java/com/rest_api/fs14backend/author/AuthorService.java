@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 //
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 //
@@ -49,10 +50,24 @@ public class AuthorService {
   public void deleteAuthor(UUID id) throws Exception {
     Optional<Author> authorToDelete = authorRepository.findAuthorById(id);
     if (authorToDelete.isPresent()) {
-      authorRepository.delete(authorToDelete.get());
+      Book book = bookRepository.findAll()
+                      .stream()
+                      .filter(
+                          bookMatchedWithAuthor -> bookMatchedWithAuthor.getAuthorList().contains(authorToDelete.get()))
+                      .findFirst()
+                      .orElse(null);
+      
+      if (null != book) {
+        throw new Exception("Book is existed with this author");
+      } else {
+        authorRepository.delete(authorToDelete.get());
+      }
+      
     } else {
       throw new IllegalStateException("Author with id " + id + " not found");
     }
+    
+    
   }
   
   //not working
