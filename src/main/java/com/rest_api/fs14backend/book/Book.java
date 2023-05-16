@@ -57,9 +57,11 @@ public class Book {
   }
   
   @ManyToOne( optional = false)
+  @JoinColumn(name = "category_id")
   private Category category;
 
   @ManyToMany
+  @JoinColumn(name = "author_id")
   private List<Author> authorList;
   
   public Book(long ISBN,
