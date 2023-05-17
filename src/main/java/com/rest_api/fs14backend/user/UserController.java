@@ -28,7 +28,7 @@ public class UserController {
 
   @GetMapping("/users")
   public List<User> findAll() {
-    System.out.println("we are inside users");
+    //System.out.println("we are inside users");
     return userRepository.findAll();
   }
 
@@ -72,12 +72,15 @@ public class UserController {
   }
 
   @PostMapping("/signup")
-  public User signup(@RequestBody User user) {
+  public String signup(@RequestBody User user) {
 
-    User newUser = new User(user.getUsername(), passwordEncoder.encode(user.getPassword()), User.Role.ADMIN);
+    if(userRepository.findByUsername(user.getUsername())!=null){
+      return HttpStatus.CONFLICT.toString();
+    }
+    User newUser = new User(user.getUsername(), passwordEncoder.encode(user.getPassword()), User.Role.USER);
     userRepository.save(newUser);
-
-    return newUser;
+    return HttpStatus.CREATED.toString();
+    //return newUser;
   }
 
 }
