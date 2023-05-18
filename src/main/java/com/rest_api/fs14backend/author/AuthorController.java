@@ -25,8 +25,8 @@ public class AuthorController {
   }*/
   
   @PostMapping("/")
-  public void createOne(@RequestBody Author author) throws Exception {
-    authorService.createOne(author);
+  public Author createOne(@RequestBody Author author) throws Exception {
+    return authorService.createOne(author);
     
   }
   @DeleteMapping(value = "/{id}")
