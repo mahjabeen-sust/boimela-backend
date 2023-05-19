@@ -3,6 +3,7 @@ package com.rest_api.fs14backend.author;
 //
 import com.rest_api.fs14backend.category.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 //
 import java.util.List;
@@ -25,18 +26,18 @@ public class AuthorController {
   }*/
   
   @PostMapping("/")
-  public Author createOne(@RequestBody Author author) throws Exception {
+  public ResponseEntity<?> createOne(@RequestBody Author author) throws Exception {
     return authorService.createOne(author);
     
   }
   @DeleteMapping(value = "/{id}")
-  public void deleteAuthor(@PathVariable UUID id) throws Exception {
-    authorService.deleteAuthor(id);
+  public ResponseEntity<?> deleteAuthor(@PathVariable UUID id) throws Exception {
+    return authorService.deleteAuthor(id);
   }
   
   @PutMapping(value = "/{id}")
-  public void updateAuthor(@PathVariable UUID id, @RequestBody Author author) throws Exception {
-    authorService.updateAuthor(id, author);
+  public ResponseEntity<?> updateAuthor(@PathVariable UUID id, @RequestBody Author author) throws Exception {
+    return authorService.updateAuthor(id, author);
   }
   
 }
