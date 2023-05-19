@@ -5,6 +5,7 @@ import com.rest_api.fs14backend.filters.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -64,9 +65,13 @@ public class SecurityConfig {
       .authorizeHttpRequests()
       .requestMatchers("/signup","/signin")
       .permitAll()
-          .requestMatchers("/api/v1/*").permitAll()
-          .requestMatchers("GET", "/users").hasRole("ADMIN")
-          .requestMatchers("GET", "/api/v1/loan/all").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.GET,"/api/v1/*").permitAll()
+          .requestMatchers(HttpMethod.GET,"/api/v1/authors/").permitAll()
+          .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.POST, "/api/v1/authors/").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.PUT, "/api/v1/authors/{id}").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.DELETE, "/api/v1/authors/{id}").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.GET, "/api/v1/loan/all").hasRole("ADMIN")
           .anyRequest().authenticated()
           
       .and()
