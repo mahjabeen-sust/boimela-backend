@@ -4,6 +4,8 @@ import com.rest_api.fs14backend.author.Author;
 import com.rest_api.fs14backend.book.Book;
 import com.rest_api.fs14backend.book.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,14 +30,16 @@ public class CategoryService {
     return categoryRepository.findAll();
   }
   
-  public Category createOne(Category newCategory) throws Exception {
+  public ResponseEntity<?> createOne(Category newCategory) throws Exception {
     List<Category> categoryList = getAllCategories();
     for (Category category : categoryList) {
       if (newCategory.getName().equals(category.getName())) {
-        throw new IllegalStateException("Category " + newCategory.getName() +  " already exist");
+        //throw new IllegalStateException("Category " + newCategory.getName() +  " already exist");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Category " + newCategory.getName() +  " already exists");
       }
     }
-    return categoryRepository.save(newCategory);
+    Category savedCategory= categoryRepository.save(newCategory);
+    return ResponseEntity.ok(savedCategory);
   }
 
   public Category findById(UUID categoryId) {
@@ -54,29 +58,44 @@ public class CategoryService {
   }*/
   
   
-  public void deleteCategory(UUID categoryId) throws Exception {
-    Book book = bookRepository.findAll()
-                                      .stream()
-                                      .filter(
-                                          bookMatchedWithCategory -> Objects.equals(bookMatchedWithCategory.getCategory().getId(), categoryId))
-                                      .findFirst()
-                                      .orElse(null);
-    
-    if (null != book) {
-      throw new Exception("Book is existed with this category");
-    } else {
-      categoryRepository.deleteById(categoryId);
+  public ResponseEntity<?> deleteCategory(UUID categoryId) throws Exception {
+    Optional<Category> categoryToDelete=categoryRepository.findCategoryById(categoryId);
+    if(categoryToDelete.isPresent()){
+      Book book = bookRepository.findAll()
+                      .stream()
+                      .filter(
+                          bookMatchedWithCategory -> Objects.equals(bookMatchedWithCategory.getCategory().getId(), categoryId))
+                      .findFirst()
+                      .orElse(null);
+      
+      if (null != book) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Book exists with this category");
+      } else {
+        categoryRepository.delete(categoryToDelete.get());
+        return ResponseEntity.ok(categoryToDelete);
+      }
+    }else{
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category with id " + categoryId + " not found");
     }
+    
   }
   
   @Transactional
-  public void updateCategory(UUID id, Category newCategory) throws Exception {
+  public ResponseEntity<?> updateCategory(UUID id, Category newCategory) throws Exception {
     Optional<Category> categoryToEdit = categoryRepository.findCategoryById(id);
     if (categoryToEdit.isPresent()) {
+      List<Category> categoryList = getAllCategories();
+      for (Category category : categoryList) {
+        if (newCategory.getName().equals(category.getName())) {
+          //throw new IllegalStateException("Category " + newCategory.getName() +  " already exist");
+          return ResponseEntity.status(HttpStatus.CONFLICT).body("Category " + newCategory.getName() +  " already exists");
+        }
+      }
       categoryToEdit.get().setName(newCategory.getName());
+      return ResponseEntity.ok(categoryToEdit);
       
     }else{
-      throw new Exception("Category does not exist!");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category does not exist!");
     }
   }
 }

@@ -2,6 +2,7 @@ package com.rest_api.fs14backend.category;
 
 import com.rest_api.fs14backend.book.Book;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public class CategoryController {
   private CategoryService categoryService;
 
   @PostMapping("/")
-  public void createOne(@RequestBody Category category) throws Exception {
-    categoryService.createOne(category);
+  public ResponseEntity<?> createOne(@RequestBody Category category) throws Exception {
+    return categoryService.createOne(category);
     //return repo.save(category);
   }
   
@@ -30,13 +31,13 @@ public class CategoryController {
   
   
   @DeleteMapping(value = "/{id}")
-  public void deleteCategory(@PathVariable UUID id) throws Exception {
-    categoryService.deleteCategory(id);
+  public ResponseEntity<?> deleteCategory(@PathVariable UUID id) throws Exception {
+    return categoryService.deleteCategory(id);
   }
   
   @PutMapping(value = "/{id}")
-  public void updateCategory(@PathVariable UUID id, @RequestBody Category category) throws Exception {
-    categoryService.updateCategory(id, category);
+  public ResponseEntity<?> updateCategory(@PathVariable UUID id, @RequestBody Category category) throws Exception {
+    return categoryService.updateCategory(id, category);
   }
   
 }

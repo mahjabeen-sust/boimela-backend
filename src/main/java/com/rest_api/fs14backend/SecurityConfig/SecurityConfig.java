@@ -65,12 +65,16 @@ public class SecurityConfig {
       .authorizeHttpRequests()
       .requestMatchers("/signup","/signin")
       .permitAll()
+          
           .requestMatchers(HttpMethod.GET,"/api/v1/*").permitAll()
-          .requestMatchers(HttpMethod.GET,"/api/v1/authors/").permitAll()
+          
           .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
           .requestMatchers(HttpMethod.POST, "/api/v1/authors/").hasRole("ADMIN")
           .requestMatchers(HttpMethod.PUT, "/api/v1/authors/{id}").hasRole("ADMIN")
           .requestMatchers(HttpMethod.DELETE, "/api/v1/authors/{id}").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.POST, "/api/v1/categories/").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.PUT, "/api/v1/categories/{id}").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/{id}").hasRole("ADMIN")
           .requestMatchers(HttpMethod.GET, "/api/v1/loan/all").hasRole("ADMIN")
           .anyRequest().authenticated()
           
