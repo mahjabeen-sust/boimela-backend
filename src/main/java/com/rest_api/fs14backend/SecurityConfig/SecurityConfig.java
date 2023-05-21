@@ -69,6 +69,9 @@ public class SecurityConfig {
           .requestMatchers(HttpMethod.GET,"/api/v1/*").permitAll()
           
           .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.POST, "/api/v1/books/").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.PUT, "/api/v1/books/{isbn}").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.DELETE, "/api/v1/books/{isbn}").hasRole("ADMIN")
           .requestMatchers(HttpMethod.POST, "/api/v1/authors/").hasRole("ADMIN")
           .requestMatchers(HttpMethod.PUT, "/api/v1/authors/{id}").hasRole("ADMIN")
           .requestMatchers(HttpMethod.DELETE, "/api/v1/authors/{id}").hasRole("ADMIN")

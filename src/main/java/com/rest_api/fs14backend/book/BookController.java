@@ -9,6 +9,7 @@ import com.rest_api.fs14backend.todo.Todo;
 import com.rest_api.fs14backend.todo.TodoDTO;
 import com.rest_api.fs14backend.todo.TodoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -44,8 +45,8 @@ public class BookController {
   }
 
   @DeleteMapping(value = "/{isbn}")
-  public void deleteBook(@PathVariable Long isbn) throws Exception {
-    bookService.deleteBook(isbn);
+  public ResponseEntity<?> deleteBook(@PathVariable Long isbn) throws Exception {
+    return bookService.deleteBook(isbn);
   }
 
   /*@PostMapping
@@ -55,7 +56,7 @@ public class BookController {
   
   //creating a new book
   @PostMapping("/")
-  public Book createOne(@RequestBody BookDTO bookDTO) {
+  public ResponseEntity<?> createOne(@RequestBody BookDTO bookDTO) {
     UUID categoryId = bookDTO.getCategoryId();
     List<UUID> authorIdList = bookDTO.getAuthorIdList();
     Category category = categoryService.findById(categoryId);
@@ -85,7 +86,7 @@ public class BookController {
   }*/
   
   @PutMapping(value = "/{isbn}")
-  public void updateBook(@PathVariable Long isbn, @RequestBody BookDTO bookDTO) throws Exception {
+  public ResponseEntity<?> updateBook(@PathVariable Long isbn, @RequestBody BookDTO bookDTO) throws Exception {
     UUID categoryId = bookDTO.getCategoryId();
     Category category = categoryService.findById(categoryId);
     List<UUID> authorIdList = bookDTO.getAuthorIdList();
@@ -93,6 +94,6 @@ public class BookController {
     authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
     
     Book book = bookMapper.newBook(bookDTO, category, authorList);
-    bookService.updateBook(isbn, book);
+    return bookService.updateBook(isbn, book);
   }
 }

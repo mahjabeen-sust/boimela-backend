@@ -2,6 +2,8 @@ package com.rest_api.fs14backend.book;
 
 import com.rest_api.fs14backend.todo.Todo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +21,9 @@ public class BookService {
     return bookRepository.findAll();
   }
   
-  public Book createOne(Book book) {
-    return bookRepository.save(book);
+  public ResponseEntity<?> createOne(Book book) {
+    Book savedBook = bookRepository.save(book);
+    return ResponseEntity.ok(savedBook);
   }
 
   public Optional<Book> findById(Long isbn) {
@@ -29,28 +32,33 @@ public class BookService {
   
   public Book findForLoan(Long isbn){return bookRepository.findForLoan(isbn);}
 
-  public void deleteBook(Long isbn) throws Exception {
+  public ResponseEntity<?> deleteBook(Long isbn) throws Exception {
     Optional<Book> bookToDelete = bookRepository.findBookByISBN(isbn);
     if (bookToDelete.isPresent()) {
       bookRepository.delete(bookToDelete.get());
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body("Book with isbn " + isbn + " deleted successfully");
     } else {
-      throw new IllegalStateException("Book with isbn " + isbn + " not found");
+      //throw new IllegalStateException("Book with isbn " + isbn + " not found");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book with isbn " + isbn + " not found");
     }
   }
 
   //update with all properties and (not implemented yet possible null values)
   @Transactional
-  public void updateBook(Long isbn, Book newBook) throws Exception {
+  public ResponseEntity<?> updateBook(Long isbn, Book newBook) throws Exception {
     Optional<Book> bookToEdit = bookRepository.findBookByISBN(isbn);
     if (bookToEdit.isPresent()) {
       bookToEdit.get().setCategory(newBook.getCategory());
       bookToEdit.get().setTitle(newBook.getTitle());
       bookToEdit.get().setDescription(newBook.getDescription());
+      bookToEdit.get().setAuthorList(newBook.getAuthorList());
       bookToEdit.get().setPublishedDate(newBook.getPublishedDate());
       bookToEdit.get().setPublishers(newBook.getPublishers());
       bookToEdit.get().setStatus(newBook.getStatus());
+      return ResponseEntity.ok(bookToEdit);
     }else{
-      throw new Exception("Book does not exist!");
+      //throw new Exception("Book does not exist!");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book does not exist!");
     }
   }
   
