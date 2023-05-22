@@ -63,15 +63,19 @@ public class SecurityConfig {
       .csrf()
       .disable()
       .authorizeHttpRequests()
-      .requestMatchers("/signup","/signin")
-      .permitAll()
-          
-          .requestMatchers(HttpMethod.GET,"/api/v1/*").permitAll()
+      
+        .requestMatchers("/signup", "/signin")
+        .permitAll()
+        .and()
+        .authorizeHttpRequests()
+        .requestMatchers(HttpMethod.GET, "/api/v1/books/","/api/v1/authors/","/api/v1/categories/")
+        .permitAll()
+      
           
           .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
-        .requestMatchers(HttpMethod.POST, "/api/v1/books/").hasRole("ADMIN")
-        .requestMatchers(HttpMethod.PUT, "/api/v1/books/{isbn}").hasRole("ADMIN")
-        .requestMatchers(HttpMethod.DELETE, "/api/v1/books/{isbn}").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.POST, "/api/v1/books/").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.PUT, "/api/v1/books/{isbn}").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.DELETE, "/api/v1/books/{isbn}").hasRole("ADMIN")
           .requestMatchers(HttpMethod.POST, "/api/v1/authors/").hasRole("ADMIN")
           .requestMatchers(HttpMethod.PUT, "/api/v1/authors/{id}").hasRole("ADMIN")
           .requestMatchers(HttpMethod.DELETE, "/api/v1/authors/{id}").hasRole("ADMIN")
@@ -85,8 +89,8 @@ public class SecurityConfig {
       .sessionManagement()
       .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
-      .httpBasic(withDefaults()).formLogin()
-      .and()
+      
+      
         .addFilter(corsFilter())
       // Add JWT token filter
       .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
