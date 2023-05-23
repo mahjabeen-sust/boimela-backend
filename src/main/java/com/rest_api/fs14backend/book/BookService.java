@@ -1,5 +1,7 @@
 package com.rest_api.fs14backend.book;
 
+import com.rest_api.fs14backend.loan.Loan;
+import com.rest_api.fs14backend.loan.LoanRepository;
 import com.rest_api.fs14backend.todo.Todo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,9 @@ import java.util.Optional;
 public class BookService {
   @Autowired
   private  BookRepository bookRepository;
+  
+  @Autowired
+  private LoanRepository loanRepository;
 
   
 
@@ -39,8 +44,23 @@ public class BookService {
   public ResponseEntity<?> deleteBook(Long isbn) throws Exception {
     Optional<Book> bookToDelete = bookRepository.findBookByISBN(isbn);
     if (bookToDelete.isPresent()) {
-      bookRepository.delete(bookToDelete.get());
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body("Book with isbn " + isbn + " deleted successfully");
+      
+      Loan loan = loanRepository.findAll()
+                      .stream()
+                      .filter(
+                          bookMatchedWithLoan -> bookMatchedWithLoan.getBook().getId()==bookToDelete.get().getId())
+                      .findFirst()
+                      .orElse(null);
+      
+      if (null != loan) {
+        //throw new Exception("Book is existed with this author");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Book is in loan");
+      } else {
+        bookRepository.delete(bookToDelete.get());
+        return ResponseEntity.ok(isbn);
+      }
+      
+      
     } else {
       //throw new IllegalStateException("Book with isbn " + isbn + " not found");
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book with isbn " + isbn + " not found");

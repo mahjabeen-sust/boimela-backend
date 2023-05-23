@@ -16,4 +16,7 @@ import java.util.UUID;
 public interface LoanRepository extends JpaRepository<Loan, UUID> {
 	@Query("SELECT s FROM Loan s WHERE s.loanUser = ?1")
 	List<Loan> findByUser(User user);
+	
+	@Query("SELECT s FROM Loan s WHERE s.book = ?1")
+	Optional<Book> findByBook(Optional<Book> book);
 }
