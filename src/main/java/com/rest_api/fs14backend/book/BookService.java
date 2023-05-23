@@ -22,6 +22,10 @@ public class BookService {
   }
   
   public ResponseEntity<?> createOne(Book book) {
+    Optional<Book> bookToAdd = bookRepository.findBookByISBN(book.getISBN());
+    if(bookToAdd.isPresent()){
+      return ResponseEntity.status(HttpStatus.CONFLICT).body("Book with isbn " + book.getISBN() + " already exists!");
+    }
     Book savedBook = bookRepository.save(book);
     return ResponseEntity.ok(savedBook);
   }
