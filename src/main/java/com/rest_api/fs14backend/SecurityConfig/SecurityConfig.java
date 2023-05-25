@@ -70,7 +70,7 @@ public class SecurityConfig {
         .authorizeHttpRequests()
         .requestMatchers(HttpMethod.GET, "/api/v1/books/","/api/v1/authors/","/api/v1/categories/")
         .permitAll()
-      
+        
           
           .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
           .requestMatchers(HttpMethod.POST, "/api/v1/books/").hasRole("ADMIN")
@@ -83,6 +83,9 @@ public class SecurityConfig {
           .requestMatchers(HttpMethod.PUT, "/api/v1/categories/{id}").hasRole("ADMIN")
           .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/{id}").hasRole("ADMIN")
           .requestMatchers(HttpMethod.GET, "/api/v1/loan/all").hasRole("ADMIN")
+          .requestMatchers(HttpMethod.GET, "/api/v1/loan/{username}").hasRole("USER")
+          .requestMatchers(HttpMethod.POST, "/api/v1/loan/").hasAnyRole("USER","ADMIN")
+          .requestMatchers(HttpMethod.PUT, "/api/v1/loan/{id}").hasAnyRole("USER","ADMIN")
           .anyRequest().authenticated()
           
       .and()

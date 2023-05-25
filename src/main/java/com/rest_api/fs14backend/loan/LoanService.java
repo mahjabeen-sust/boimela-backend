@@ -5,6 +5,7 @@ import com.rest_api.fs14backend.book.BookService;
 import com.rest_api.fs14backend.user.User;
 import com.rest_api.fs14backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,20 +31,23 @@ public class LoanService {
 		return loanRepository.findById(id);
 	}
 	
-	public List<Loan> findByUser(User user){return  loanRepository.findByUser(user);}
+	public ResponseEntity<?> findByUser(User user){return  ResponseEntity.ok(loanRepository.findByUser(user));}
 	
 	@Transactional
-	public Loan createOne(Loan loan, Book book){
+	public ResponseEntity<?> createOne(Loan loan, Book book){
+		
+		Loan savedLoan= loanRepository.save(loan);
 		//update book status
 		bookService.changeStatusForLoan(book, Book.Status.BORROWED);
-		return loanRepository.save(loan);
+		return ResponseEntity.ok(savedLoan);
 	}
 	
 	@Transactional
-	public void returnLoan(Optional<Loan> loan){
+	public ResponseEntity<?> returnLoan(Optional<Loan> loan){
 		loan.get().setReturnDate(LocalDate.now());
 		loan.get().setLoanStatus(Loan.LoanStatus.RETURNED);
 		Book returnedBook = loan.get().getBook();
 		returnedBook.setStatus(Book.Status.AVAILABLE);
+		return ResponseEntity.ok(loan);
 	}
 }

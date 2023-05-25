@@ -13,6 +13,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
   User findByUsername(String username);
   
-  @Query("SELECT s FROM user s WHERE s.id = ?1")
-  User findForLoan(UUID id);
+  
 }
