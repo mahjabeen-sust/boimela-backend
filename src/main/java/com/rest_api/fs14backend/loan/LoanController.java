@@ -76,8 +76,8 @@ public class LoanController {
 		return loanService.createOne(loan, book);
 	}
 	
-	@PutMapping(value = "/{id}")
-	public ResponseEntity<?> returnLoan(@PathVariable UUID id) throws Exception{
+	@PutMapping("/{id}")
+	public ResponseEntity<?> returnLoan(@PathVariable UUID id, @RequestBody String text){
 		Optional<Loan> loan = loanService.findById(id);
 		if(loan.isPresent()){
 			return loanService.returnLoan(loan);
