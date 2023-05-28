@@ -21,7 +21,7 @@ public class JwtUtils {
   
   Dotenv dotenv = Dotenv.load();
   //private final String secret = dotenv.get("JWTSECRET");
-  private final String secret ="5634d75f1c7b46aebd20df6a749e3715ThisIsAMuchLongerPasswordOhBoysDoINeedMoreCharacters"
+  private final String secret ="5634d75f1c7b46aebd20df6a749e3715ThisIsAMuchLongerPasswordOhBoysDoINeedMoreCharacters";
   
   
   
