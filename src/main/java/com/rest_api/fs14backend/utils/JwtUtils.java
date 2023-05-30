@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 //dotenv
-import io.github.cdimascio.dotenv.Dotenv;
+//import io.github.cdimascio.dotenv.Dotenv;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -17,10 +17,10 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtils {
-  //final String secret = "ThisIsAMuchLongerPasswordOhBoysDoINeedMoreCharacters";
+  final String secret = "ThisIsAMuchLongerPasswordOhBoysDoINeedMoreCharacters";
   
-  Dotenv dotenv = Dotenv.load();
-  private final String secret = dotenv.get("JWTSECRET");
+  //Dotenv dotenv = Dotenv.load();
+  //private final String secret = dotenv.get("JWTSECRET");
   
   
   
