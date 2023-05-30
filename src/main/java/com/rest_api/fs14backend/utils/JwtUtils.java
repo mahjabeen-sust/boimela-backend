@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 //dotenv
@@ -17,7 +18,12 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtils {
-  final String secret = "ThisIsAMuchLongerPasswordOhBoysDoINeedMoreCharacters";
+  //final String secret = "ThisIsAMuchLongerPasswordOhBoysDoINeedMoreCharacters";
+  public final String secret;
+  
+  public JwtUtils(@Value("${jwt.secret}") String secret){
+    this.secret=secret;
+  }
   
   //Dotenv dotenv = Dotenv.load();
   //private final String secret = dotenv.get("JWTSECRET");
