@@ -2,7 +2,6 @@ package com.rest_api.fs14backend.book;
 
 import com.rest_api.fs14backend.loan.Loan;
 import com.rest_api.fs14backend.loan.LoanRepository;
-import com.rest_api.fs14backend.todo.Todo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -5,9 +5,7 @@ import com.rest_api.fs14backend.author.Author;
 import com.rest_api.fs14backend.author.AuthorService;
 import com.rest_api.fs14backend.category.Category;
 import com.rest_api.fs14backend.category.CategoryService;
-import com.rest_api.fs14backend.todo.Todo;
-import com.rest_api.fs14backend.todo.TodoDTO;
-import com.rest_api.fs14backend.todo.TodoMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
