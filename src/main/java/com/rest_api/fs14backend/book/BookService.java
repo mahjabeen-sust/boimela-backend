@@ -38,6 +38,8 @@ public class BookService {
     return bookRepository.findBookByISBN(isbn);
   }
   
+  
+  
   public Book findForLoan(Long isbn){return bookRepository.findForLoan(isbn);}
 
   public ResponseEntity<?> deleteBook(Long isbn) throws Exception {

@@ -25,11 +25,7 @@ public class AuthorService {
   @Autowired
   private BookRepository bookRepository;
 
- 
-//
-/*  public Author createOne(Author author) {
-  return authorRepository.save(author);
-}*/
+
   
   public Author findById(UUID authorId) {
     return authorRepository.findById(authorId).orElse(null);
@@ -53,6 +49,9 @@ public class AuthorService {
     
     //return HttpStatus.CREATED.toString();
   }
+  
+  
+
   
   public ResponseEntity<?> deleteAuthor(UUID id) throws Exception {
     Optional<Author> authorToDelete = authorRepository.findAuthorById(id);
@@ -83,7 +82,7 @@ public class AuthorService {
   
   //not working
   @Transactional
-  public ResponseEntity<?> updateAuthor(UUID id, Author newAuthor) throws Exception {
+  public ResponseEntity<?> updateAuthor(UUID id, AuthorDTO newAuthor) throws Exception {
     Optional<Author> authorToEdit = authorRepository.findAuthorById(id);
     //System.out.println("authorToEdit : "+authorToEdit);
     if (authorToEdit.isPresent()) {

@@ -23,9 +23,11 @@ public class Loan {
 	private UUID id;
 	
 	@ManyToOne
+	@JoinColumn(name = "user_id")
 	private User loanUser;
 	
 	@ManyToOne
+	@JoinColumn(name = "book_id")
 	private Book book;
 	
 	@Column(nullable = false)

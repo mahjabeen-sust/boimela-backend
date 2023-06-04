@@ -73,7 +73,7 @@ public class Book {
               Category category,
               List<Author> authorList
 
-//              Author author
+
   ) {
     this.ISBN = ISBN;
     this.title = title;
@@ -92,14 +92,6 @@ public class Book {
     this.title = title;
   }
 
-
-//  public Category getCategory() {
-//    return category;
-//  }
-
-//  public void setCategory(Category category) {
-//    this.category = category;
-//  }
 
   @Override
   public boolean equals(Object o) {

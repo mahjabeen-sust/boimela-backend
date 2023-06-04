@@ -18,7 +18,9 @@ public class CategoryController {
   private CategoryService categoryService;
 
   @PostMapping("/")
-  public ResponseEntity<?> createOne(@RequestBody Category category) throws Exception {
+  public ResponseEntity<?> createOne(@RequestBody CategoryDTO categoryDTO) throws Exception {
+    Category category=new Category();
+    category.setName(categoryDTO.getName());
     return categoryService.createOne(category);
     //return repo.save(category);
   }
@@ -36,8 +38,8 @@ public class CategoryController {
   }
   
   @PutMapping(value = "/{id}")
-  public ResponseEntity<?> updateCategory(@PathVariable UUID id, @RequestBody Category category) throws Exception {
-    return categoryService.updateCategory(id, category);
+  public ResponseEntity<?> updateCategory(@PathVariable UUID id, @RequestBody CategoryDTO categoryDTO) throws Exception {
+    return categoryService.updateCategory(id, categoryDTO);
   }
   
 }

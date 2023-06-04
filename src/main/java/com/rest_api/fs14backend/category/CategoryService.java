@@ -81,7 +81,7 @@ public class CategoryService {
   }
   
   @Transactional
-  public ResponseEntity<?> updateCategory(UUID id, Category newCategory) throws Exception {
+  public ResponseEntity<?> updateCategory(UUID id, CategoryDTO newCategory) throws Exception {
     Optional<Category> categoryToEdit = categoryRepository.findCategoryById(id);
     if (categoryToEdit.isPresent()) {
       List<Category> categoryList = getAllCategories();
