@@ -11,6 +11,7 @@ import java.util.UUID;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
 	
+	boolean existsByName(String categoryName);
 	@Query("SELECT s FROM category s WHERE s.id = ?1")
 	Optional<Category> findCategoryById(UUID id);
 }

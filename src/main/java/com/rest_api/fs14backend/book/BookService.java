@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class BookService {
@@ -91,4 +93,16 @@ public class BookService {
   public void changeStatusForLoan(Book bookToLoan, Book.Status status){
     bookToLoan.setStatus(status);
   }
+  
+  //checking if book exists with category
+  public Book ifBookHasCategory(UUID categoryId){
+    return bookRepository.findAll()
+               .stream()
+               .filter(
+                   bookMatchedWithCategory -> Objects.equals(bookMatchedWithCategory.getCategory().getId(), categoryId))
+               .findFirst()
+               .orElse(null);
+    
+  }
+  
 }

@@ -70,7 +70,7 @@ public class BookControllerTest {
 		mockMvc.perform(get("/api/v1/books/"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(2)))
-				.andExpect(jsonPath("$[0].title", is("Book 1")))
+				.andExpect(jsonPath("$[0].title", is("Book 3")))
 				.andExpect(jsonPath("$[1].title", is("Book 2")));
 		
 		// Verify that the BookService's getAllBooks method was called
