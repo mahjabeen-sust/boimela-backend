@@ -31,24 +31,24 @@ public class LoanService {
 		return loanRepository.findById(id);
 	}
 	
-	public ResponseEntity<?> findByUser(User user){return  ResponseEntity.ok(loanRepository.findByUser(user));}
+	public List<Loan> findLoanByUser(User user){return loanRepository.findByUser(user);}
 	
 	@Transactional
-	public ResponseEntity<?> createOne(Loan loan, Book book){
+	public Loan createOne(Loan loan, Book book){
 		
 		Loan savedLoan= loanRepository.save(loan);
 		//update book status
 		bookService.changeStatusForLoan(book, Book.Status.BORROWED);
-		return ResponseEntity.ok(savedLoan);
+		return savedLoan;
 	}
 	
 	@Transactional
-	public ResponseEntity<?> returnLoan(Optional<Loan> loan){
+	public Loan returnLoan(Optional<Loan> loan){
 		loan.get().setReturnDate(LocalDate.now());
 		loan.get().setLoanStatus(Loan.LoanStatus.RETURNED);
 		Book returnedBook = loan.get().getBook();
 		returnedBook.setStatus(Book.Status.AVAILABLE);
-		return ResponseEntity.ok(loan);
+		return loan.get();
 	}
 	
 	public Loan ifBookIsInLoan(Book bookToDelete){

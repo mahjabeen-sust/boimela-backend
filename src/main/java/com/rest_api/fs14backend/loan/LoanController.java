@@ -44,8 +44,8 @@ public class LoanController {
 	private JwtUtils jwtUtils;
 	
 	@GetMapping("/all")
-	public List<Loan> getLoans() {
-		return loanService.getAllLoans();
+	public ResponseEntity<List<Loan>> getLoans() {
+		return ResponseEntity.ok(loanService.getAllLoans());
 	}
 	
 	@GetMapping("/{username}")
@@ -58,7 +58,8 @@ public class LoanController {
 		}else{
 			User user= userRepository.findByUsername(username);
 			//System.out.println("entered else");
-			return loanService.findByUser(user);
+			List<Loan> loans=loanService.findLoanByUser(user);
+			return ResponseEntity.ok(loans);
 		}
 		
 		
@@ -72,15 +73,17 @@ public class LoanController {
 		Book book = bookService.findForLoan(isbn);
 		User loanUser = userRepository.findByUsername(username);
 		Loan loan = loanMapper.newLoan(loanDTO, book, loanUser);
+		Loan savedLoan = loanService.createOne(loan, book);
 		
-		return loanService.createOne(loan, book);
+		return ResponseEntity.ok(savedLoan);
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<?> returnLoan(@PathVariable UUID id, @RequestBody String text){
 		Optional<Loan> loan = loanService.findById(id);
 		if(loan.isPresent()){
-			return loanService.returnLoan(loan);
+			Loan returnedLoan=loanService.returnLoan(loan);
+			return ResponseEntity.ok(returnedLoan);
 		}else {
 			//throw new IllegalStateException("Loan with id " + id + " not found");
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Loan with id " + id + " not found");
