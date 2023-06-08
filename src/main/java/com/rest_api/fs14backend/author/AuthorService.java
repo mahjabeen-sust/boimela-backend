@@ -6,6 +6,7 @@ import com.rest_api.fs14backend.book.BookRepository;
 
 
 import com.rest_api.fs14backend.category.Category;
+import com.rest_api.fs14backend.category.CategoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,71 +35,48 @@ public class AuthorService {
     return authorRepository.findAll();
   }
   
-  
-  public ResponseEntity<?> createOne(Author newAuthor) {
-    List<Author> authorList = getAllAuthors();
-    for (Author author : authorList) {
-      if (newAuthor.getName().equals(author.getName())) {
-        //throw new IllegalStateException("Author " + newAuthor.getName() +  " already exist");
-        //return HttpStatus.CONFLICT.toString();
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Author " + newAuthor.getName() +  " already exists");
-      }
-    }
-    Author savedAuthor = authorRepository.save(newAuthor);
-    return ResponseEntity.ok(savedAuthor);
-    
-    //return HttpStatus.CREATED.toString();
+  public boolean checkAuthorExists(String authorName) {
+    // Check if the author already exists in the repository
+    return authorRepository.existsByName(authorName);
   }
   
+  public Author addAuthor(String  authorName) throws Exception{
+    try{
+      Author newAuthor=new Author();
+      newAuthor.setName(authorName);
+      return authorRepository.save(newAuthor);
+    }catch (Exception e){
+      System.out.println("Failed to create author!");
+      throw new RuntimeException("Failed to create author", e);
+    }
+    
+  }
   
+ 
+  
+  public Author deleteAuthor(UUID id) throws Exception {
+    Optional<Author> authorToDelete=authorRepository.findById(id);
+    if(authorToDelete.isPresent()){
+      Author author=authorToDelete.get();
+      authorRepository.delete(author);
+      return author;
+    }else{
+      return null;
+    }
+    
+  }
 
   
-  public ResponseEntity<?> deleteAuthor(UUID id) throws Exception {
-    Optional<Author> authorToDelete = authorRepository.findAuthorById(id);
-    if (authorToDelete.isPresent()) {
-      Book book = bookRepository.findAll()
-                      .stream()
-                      .filter(
-                          bookMatchedWithAuthor -> bookMatchedWithAuthor.getAuthorList().contains(authorToDelete.get()))
-                      .findFirst()
-                      .orElse(null);
-      
-      if (null != book) {
-        //throw new Exception("Book is existed with this author");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Book exists with this author");
-      } else {
-        authorRepository.delete(authorToDelete.get());
-        return ResponseEntity.ok(authorToDelete);
-      }
-      
-    } else {
-      //throw new IllegalStateException("Author with id " + id + " not found");
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Author with id " + id + " not found");
-      
-    }
-    
-    
-  }
   
-  //not working
   @Transactional
-  public ResponseEntity<?> updateAuthor(UUID id, AuthorDTO newAuthor) throws Exception {
-    Optional<Author> authorToEdit = authorRepository.findAuthorById(id);
-    //System.out.println("authorToEdit : "+authorToEdit);
-    if (authorToEdit.isPresent()) {
-      //System.out.println("edit name : "+newAuthor.getName());
-      List<Author> authorList = getAllAuthors();
-      for (Author author : authorList) {
-        if (newAuthor.getName().equals(author.getName())) {
-          return ResponseEntity.status(HttpStatus.CONFLICT).body("Author " + newAuthor.getName() +  " already exists");
-        }
-      }
-      authorToEdit.get().setName(newAuthor.getName());
-      return ResponseEntity.ok(authorToEdit);
-      
+  public Author updateAuthor(UUID id, AuthorDTO newAuthor) throws Exception {
+    Optional<Author> authorToEdit=authorRepository.findById(id);
+    if(authorToEdit.isPresent()){
+      Author author=authorToEdit.get();
+      author.setName(newAuthor.getName());
+      return authorRepository.save(author);
     }else{
-      //throw new Exception("Author does not exist!");
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Author does not exist!");
+      return null;
     }
   }
 

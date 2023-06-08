@@ -1,5 +1,6 @@
 package com.rest_api.fs14backend.book;
 
+import com.rest_api.fs14backend.author.Author;
 import com.rest_api.fs14backend.loan.Loan;
 import com.rest_api.fs14backend.loan.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +103,16 @@ public class BookService {
                    bookMatchedWithCategory -> Objects.equals(bookMatchedWithCategory.getCategory().getId(), categoryId))
                .findFirst()
                .orElse(null);
+    
+  }
+  
+  public Book ifBookHasAuthor(Author authorToDelete){
+    return bookRepository.findAll()
+                           .stream()
+                           .filter(
+                               bookMatchedWithAuthor -> bookMatchedWithAuthor.getAuthorList().contains(authorToDelete))
+                           .findFirst()
+                           .orElse(null);
     
   }
   

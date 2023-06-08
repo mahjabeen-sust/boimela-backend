@@ -51,9 +51,9 @@ public class CategoryService {
   }
   
   public Category deleteCategory(UUID id) throws Exception {
-    Optional<Category> categoryToEdit=categoryRepository.findById(id);
-    if(categoryToEdit.isPresent()){
-      Category category=categoryToEdit.get();
+    Optional<Category> categoryToDelete=categoryRepository.findById(id);
+    if(categoryToDelete.isPresent()){
+      Category category=categoryToDelete.get();
       categoryRepository.delete(category);
       return category;
     }else{
