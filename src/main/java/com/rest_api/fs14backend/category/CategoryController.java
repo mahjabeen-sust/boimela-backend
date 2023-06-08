@@ -43,34 +43,33 @@ public class CategoryController {
   
   @DeleteMapping(value = "/{id}")
   public ResponseEntity<?> deleteCategory(@PathVariable UUID id) throws Exception {
-    Category categoryToDelete=categoryService.findById(id);
-    if(categoryToDelete!=null){
+   
       Book book=bookService.ifBookHasCategory(id);
       if (null != book) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Book exists with this category");
       }
-      categoryService.deleteCategory(categoryToDelete);
-      return ResponseEntity.ok(categoryToDelete);
-    }else{
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category with id " + id + " not found");
-    }
+      Category categoryToDelete=categoryService.deleteCategory(id);
+      if(categoryToDelete!=null){
+        return ResponseEntity.ok(categoryToDelete);
+      }else{
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category with id " + id + " not found");
+      }
     
   }
   
   
   @PutMapping(value = "/{id}")
   public ResponseEntity<?> updateCategory(@PathVariable UUID id, @RequestBody CategoryDTO categoryDTO) throws Exception {
-    Category categoryToEdit=categoryService.findById(id);
-    if(categoryToEdit!=null){
       boolean categoryExists = categoryService.checkCategoryExists(categoryDTO.getName());
       if (categoryExists) {
         return ResponseEntity.badRequest().body("Category " + categoryDTO.getName()+ " already exists");
       }
-      Category updatedCategory = categoryService.updateCategory(categoryToEdit, categoryDTO);
-      return ResponseEntity.ok(updatedCategory);
-    }else{
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category does not exist!");
-    }
+      Category updatedCategory = categoryService.updateCategory(id, categoryDTO);
+      if(updatedCategory!=null){
+        return ResponseEntity.ok(updatedCategory);
+      }else{
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category does not exist!");
+      }
     
   }
   

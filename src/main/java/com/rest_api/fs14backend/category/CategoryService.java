@@ -50,16 +50,29 @@ public class CategoryService {
     return categoryRepository.findById(categoryId).orElse(null);
   }
   
-  public void deleteCategory(Category categoryToDelete) throws Exception {
-    categoryRepository.delete(categoryToDelete);
+  public Category deleteCategory(UUID id) throws Exception {
+    Optional<Category> categoryToEdit=categoryRepository.findById(id);
+    if(categoryToEdit.isPresent()){
+      Category category=categoryToEdit.get();
+      categoryRepository.delete(category);
+      return category;
+    }else{
+      return null;
+    }
+    
   }
   
   
   
   @Transactional
-  public Category updateCategory(Category categoryToEdit, CategoryDTO newCategory) throws Exception {
-      categoryToEdit.setName(newCategory.getName());
-      return categoryToEdit;
-    
+  public Category updateCategory(UUID id, CategoryDTO newCategory) throws Exception {
+      Optional<Category> categoryToEdit=categoryRepository.findById(id);
+      if(categoryToEdit.isPresent()){
+        Category category=categoryToEdit.get();
+        category.setName(newCategory.getName());
+        return categoryRepository.save(category);
+      }else{
+        return null;
+      }
   }
 }
