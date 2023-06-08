@@ -50,4 +50,13 @@ public class LoanService {
 		returnedBook.setStatus(Book.Status.AVAILABLE);
 		return ResponseEntity.ok(loan);
 	}
+	
+	public Loan ifBookIsInLoan(Book bookToDelete){
+		return loanRepository.findAll()
+							 .stream()
+							 .filter(
+									 bookMatchedWithLoan -> bookMatchedWithLoan.getBook().getId()==bookToDelete.getId() && bookMatchedWithLoan.getLoanStatus().toString()=="INDEBT")
+							 .findFirst()
+							 .orElse(null);
+	}
 }

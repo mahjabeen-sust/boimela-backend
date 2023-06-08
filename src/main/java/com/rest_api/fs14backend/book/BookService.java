@@ -1,6 +1,7 @@
 package com.rest_api.fs14backend.book;
 
 import com.rest_api.fs14backend.author.Author;
+import com.rest_api.fs14backend.category.Category;
 import com.rest_api.fs14backend.loan.Loan;
 import com.rest_api.fs14backend.loan.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,15 @@ public class BookService {
     return bookRepository.findAll();
   }
   
-  public ResponseEntity<?> createOne(Book book) {
-    Optional<Book> bookToAdd = bookRepository.findBookByISBN(book.getISBN());
-    if(bookToAdd.isPresent()){
-      return ResponseEntity.status(HttpStatus.CONFLICT).body("Book with isbn " + book.getISBN() + " already exists!");
+  
+  public Book addBook(Book newBook) throws Exception{
+    try{
+      return bookRepository.save(newBook);
+    }catch (Exception e){
+      System.out.println("Failed to create book!");
+      throw new RuntimeException("Failed to create book", e);
     }
-    Book savedBook = bookRepository.save(book);
-    return ResponseEntity.ok(savedBook);
+    
   }
 
   public Optional<Book> findById(Long isbn) {
@@ -44,36 +47,20 @@ public class BookService {
   
   
   public Book findForLoan(Long isbn){return bookRepository.findForLoan(isbn);}
-
-  public ResponseEntity<?> deleteBook(Long isbn) throws Exception {
-    Optional<Book> bookToDelete = bookRepository.findBookByISBN(isbn);
-    if (bookToDelete.isPresent()) {
-      
-      Loan loan = loanRepository.findAll()
-                      .stream()
-                      .filter(
-                          bookMatchedWithLoan -> bookMatchedWithLoan.getBook().getId()==bookToDelete.get().getId())
-                      .findFirst()
-                      .orElse(null);
-      
-      if (null != loan) {
-        //throw new Exception("Book is existed with this author");
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Book is in loan");
-      } else {
-        bookRepository.delete(bookToDelete.get());
-        return ResponseEntity.ok(isbn);
-      }
-      
-      
-    } else {
-      //throw new IllegalStateException("Book with isbn " + isbn + " not found");
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book with isbn " + isbn + " not found");
+  
+  
+  public boolean deleteBook(Long isbn) throws Exception{
+    Optional<Book> bookToDelete=bookRepository.findBookByISBN(isbn);
+    if(bookToDelete.isPresent()){
+      bookRepository.delete(bookToDelete.get());
+      return true;
+    }else{
+      return false;
     }
   }
-
-  //update with all properties and (not implemented yet possible null values)
+  
   @Transactional
-  public ResponseEntity<?> updateBook(Long isbn, Book newBook) throws Exception {
+  public Book updateBook(Long isbn, Book newBook) throws Exception {
     Optional<Book> bookToEdit = bookRepository.findBookByISBN(isbn);
     if (bookToEdit.isPresent()) {
       bookToEdit.get().setCategory(newBook.getCategory());
@@ -83,10 +70,10 @@ public class BookService {
       bookToEdit.get().setPublishedDate(newBook.getPublishedDate());
       bookToEdit.get().setPublishers(newBook.getPublishers());
       bookToEdit.get().setStatus(newBook.getStatus());
-      return ResponseEntity.ok(bookToEdit);
+      return bookToEdit.get();
     }else{
       //throw new Exception("Book does not exist!");
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book does not exist!");
+      return null;
     }
   }
   
