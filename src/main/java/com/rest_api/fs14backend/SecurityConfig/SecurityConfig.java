@@ -46,7 +46,7 @@ public class SecurityConfig {
   public CorsFilter corsFilter() {
     CorsConfiguration corsConfiguration = new CorsConfiguration();
     corsConfiguration.setAllowCredentials(true);
-    corsConfiguration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3000/","https://boimela.netlify.app/"));
+    corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:3000","http://127.0.0.1:3000","https://boimela.netlify.app"));
     corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin", "Content-Type",
         "Accept", "Authorization", "Origin, Accept", "X-Requested-With",
         "Access-Control-Request-Method", "Access-Control-Allow-Origin", " Access-Control-Allow-Credentials"));
