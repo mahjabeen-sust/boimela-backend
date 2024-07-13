@@ -1,10 +1,10 @@
 services:
   db:
-    container_name: library
+    container_name: mahjabeen-postgres-db
     image: postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Buidamquan1
+      POSTGRES_PASSWORD: Neela_007
       PGDATA: /data/postgres
     volumes:
       - db:/data/postgres
