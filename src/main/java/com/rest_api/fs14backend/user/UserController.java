@@ -77,7 +77,7 @@ public class UserController {
     if(userRepository.findByUsername(user.getUsername())!=null){
       return HttpStatus.CONFLICT.toString();
     }
-    User newUser = new User(user.getUsername(), passwordEncoder.encode(user.getPassword()), User.Role.ADMIN); // change to ADMIN for admin
+    User newUser = new User(user.getUsername(), passwordEncoder.encode(user.getPassword()), User.Role.USER); // change to ADMIN for admin
     userRepository.save(newUser);
     return HttpStatus.CREATED.toString();
     //return newUser;
