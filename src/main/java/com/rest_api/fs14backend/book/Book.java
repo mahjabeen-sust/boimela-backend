@@ -37,8 +37,8 @@ public class Book {
 
   @Column(nullable = true)
   private LocalDate publishedDate;
-
-  @Column(nullable = true)
+  
+  @Column(nullable = true, length = 1000) // Update the length here
   private String description;
 
   @Enumerated(EnumType.STRING)

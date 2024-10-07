@@ -76,17 +76,24 @@ public class BookController {
     if(bookToAdd.isPresent()){
       return ResponseEntity.status(HttpStatus.CONFLICT).body("Book with isbn " + bookDTO.getISBN() + " already exists!");
     }else{
-      UUID categoryId = bookDTO.getCategoryId();
-      List<UUID> authorIdList = bookDTO.getAuthorIdList();
-      Category category = categoryService.findById(categoryId);
-      List<Author> authorList = new ArrayList<>();
-      authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
-      Book book = bookMapper.newBook(bookDTO, category, authorList);
-      Book savedBook=bookService.addBook(book);
-      if(savedBook!=null){
-        return ResponseEntity.ok(savedBook);
-      }else{
-        return ResponseEntity.badRequest().body("Failed to create book");
+      try {
+        UUID categoryId = bookDTO.getCategoryId();
+        List<UUID> authorIdList = bookDTO.getAuthorIdList();
+        Category category = categoryService.findById(categoryId);
+        List<Author> authorList = new ArrayList<>();
+        authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
+        
+        Book book = bookMapper.newBook(bookDTO, category, authorList);
+        Book savedBook = bookService.addBook(book);
+        
+        if (savedBook != null) {
+          return ResponseEntity.ok(savedBook);
+        } else {
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                     .body("Failed to save the book.");
+        }
+      } catch (Exception ex) {
+        return new ResponseEntity<>("Failed to create book: " + ex.getMessage(), HttpStatus.FORBIDDEN);
       }
     }
     

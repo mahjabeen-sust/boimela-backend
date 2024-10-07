@@ -2,13 +2,16 @@ package com.rest_api.fs14backend.book;
 
 import com.rest_api.fs14backend.author.Author;
 import com.rest_api.fs14backend.category.Category;
+import com.rest_api.fs14backend.exceptions.CustomException;
 import com.rest_api.fs14backend.loan.Loan;
 import com.rest_api.fs14backend.loan.LoanRepository;
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,11 +34,26 @@ public class BookService {
   
   
   public Book addBook(Book newBook) throws Exception{
-    try{
+    try {
       return bookRepository.save(newBook);
-    }catch (Exception e){
-      System.out.println("Failed to create book!");
-      throw new RuntimeException("Failed to create book", e);
+    } catch (DataAccessException e) {
+      // Log the entire exception stack trace
+      // e.printStackTrace(); // This will show you the hierarchy of exceptions
+      
+      // Get the root cause
+      Throwable cause = e.getRootCause();
+      
+      // Traverse causes to find PSQLException
+      while (cause != null) {
+        if (cause instanceof PSQLException) {
+          String errorMessage = cause.getMessage();
+          throw new CustomException("Database Error: " + errorMessage, cause);
+        }
+        cause = cause.getCause(); // Move to the next cause
+      }
+      
+      // If no PSQLException found, throw a generic custom exception
+      throw new CustomException(e.getMessage(), e);
     }
     
   }
