@@ -24,20 +24,20 @@ import java.util.UUID;
 public class BookController {
   @Autowired
   private BookService bookService;
-  
+
   @Autowired
   private CategoryService categoryService;
-  
+
   @Autowired
   private AuthorService authorService;
-  
+
   @Autowired
   private LoanService loanService;
-  
+
   @Autowired
   private BookMapper bookMapper;
 
-  
+
 
   @GetMapping("/")
   public ResponseEntity<List<Book>> getBooks() {
@@ -48,31 +48,38 @@ public class BookController {
   public Optional<Book> getBookByIsbn(@PathVariable Long isbn) {
     return bookService.findById(isbn);
   }
- 
-  
+
+
   @DeleteMapping(value = "/{isbn}")
   public ResponseEntity<?> deleteBook(@PathVariable Long isbn) throws Exception {
     Optional<Book> bookToDelete=bookService.findById(isbn);
-    if(bookToDelete.isPresent()){
-      Loan bookIsInLoan=loanService.ifBookIsInLoan(bookToDelete.get());
-      if(bookIsInLoan!=null){
+    if(!bookToDelete.isPresent()){
+      return ResponseEntity.badRequest().body("Book with isbn " + isbn + " not found!");
+    }
+
+    Loan bookIsInLoan=loanService.ifBookIsInLoan(bookToDelete.get());
+    if(bookIsInLoan!=null){
         return ResponseEntity.badRequest().body("Book is in loan!");
-      }else{
+    }else{
+      try{
         boolean deletedBook=bookService.deleteBook(isbn);
         if(deletedBook){
           return ResponseEntity.ok(isbn);
+        }else{
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                  .body("Failed to delete the book.");
         }
-     }
+      } catch(Exception e){
+        return new ResponseEntity<>("Failed to delete book: " + e.getMessage(), HttpStatus.FORBIDDEN);
+      }
     }
-    return ResponseEntity.badRequest().body("Book with isbn " + isbn + " not found!");
-    
   }
 
-  
+
   @PostMapping("/")
   public ResponseEntity<?> createOne(@RequestBody BookDTO bookDTO) throws Exception{
     Optional<Book> bookToAdd = bookService.findById(bookDTO.getISBN());
-    
+
     if(bookToAdd.isPresent()){
       return ResponseEntity.status(HttpStatus.CONFLICT).body("Book with isbn " + bookDTO.getISBN() + " already exists!");
     }else{
@@ -82,10 +89,10 @@ public class BookController {
         Category category = categoryService.findById(categoryId);
         List<Author> authorList = new ArrayList<>();
         authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
-        
+
         Book book = bookMapper.newBook(bookDTO, category, authorList);
         Book savedBook = bookService.addBook(book);
-        
+
         if (savedBook != null) {
           return ResponseEntity.ok(savedBook);
         } else {
@@ -96,10 +103,10 @@ public class BookController {
         return new ResponseEntity<>("Failed to create book: " + ex.getMessage(), HttpStatus.FORBIDDEN);
       }
     }
-    
+
   }
 
-  
+
   @PutMapping(value = "/{isbn}")
   public ResponseEntity<?> updateBook(@PathVariable Long isbn, @RequestBody BookDTO bookDTO) throws Exception {
     UUID categoryId = bookDTO.getCategoryId();
@@ -107,7 +114,7 @@ public class BookController {
     List<UUID> authorIdList = bookDTO.getAuthorIdList();
     List<Author> authorList = new ArrayList<>();
     authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
-    
+
     Book book = bookMapper.newBook(bookDTO, category, authorList);
     Book updatedBook= bookService.updateBook(isbn, book);
     if(updatedBook!=null){
