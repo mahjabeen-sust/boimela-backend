@@ -54,7 +54,7 @@ public class BookController {
   public ResponseEntity<?> deleteBook(@PathVariable Long isbn) throws Exception {
     Optional<Book> bookToDelete=bookService.findById(isbn);
     if(!bookToDelete.isPresent()){
-      return ResponseEntity.badRequest().body("Book with isbn " + isbn + " not found!");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book with isbn " + isbn + " not found!");
     }
 
     Loan bookIsInLoan=loanService.ifBookIsInLoan(bookToDelete.get());

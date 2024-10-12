@@ -33,53 +33,48 @@ public class UserController {
   }
 
   @PostMapping("/signin")
-  public String login(@RequestBody AuthRequest authRequest){
-
-    //original code from yazan
-    /*authenticationManager.authenticate(
-      new UsernamePasswordAuthenticationToken(
-        authRequest.getUsername(),
-        authRequest.getPassword()
-      )
-    );
-    
-    User user = userRepository.findByUsername(authRequest.getUsername());
-    //System.out.println("found logged in user : " +user);
-    return jwtUtils.generateToken(user);*/
-    //original code from yazan ends
-   
-    
-    
+  public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) throws Exception{
     User user = userRepository.findByUsername(authRequest.getUsername());
     if (user == null) {
-      //System.out.println(HttpStatus.NOT_FOUND);
-      return HttpStatus.NOT_FOUND.toString();
+      //System.out.println(HttpStatus.NOT_FOUND)
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username not found! Please sign up!");
     } else {
-      
       if(!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())){
-        return HttpStatus.UNAUTHORIZED.toString();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Wrong Username or Password!");
       }
-      authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(
-              authRequest.getUsername(),
-              authRequest.getPassword()
-          )
-      );
-     
-      return jwtUtils.generateToken(user);
+      try {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authRequest.getUsername(),
+                        authRequest.getPassword()
+                )
+        );
+        return ResponseEntity.ok(jwtUtils.generateToken(user));
+      } catch (Exception e) {
+        return new ResponseEntity<>("Failed to sign in: " + e.getMessage(), HttpStatus.FORBIDDEN);
+      }
+
     }
-    
+
   }
 
   @PostMapping("/signup")
-  public String signup(@RequestBody User user) {
+  public ResponseEntity<?> signup(@RequestBody User user) throws Exception{
 
     if(userRepository.findByUsername(user.getUsername())!=null){
-      return HttpStatus.CONFLICT.toString();
+      // return HttpStatus.CONFLICT.toString();
+      return ResponseEntity.status(HttpStatus.CONFLICT).body("Username " + user.getUsername() + " already exists! Choose a different username");
+    } else {
+      try {
+        User newUser = new User(user.getUsername(), passwordEncoder.encode(user.getPassword()), User.Role.USER); // change to ADMIN for admin
+        userRepository.save(newUser);
+        // return HttpStatus.CREATED.toString();
+        return ResponseEntity.ok("Registered succesfully! Please signin to continue.");
+      } catch (Exception e) {
+        return new ResponseEntity<>("Failed to create user: " + e.getMessage(), HttpStatus.FORBIDDEN);
+      }
     }
-    User newUser = new User(user.getUsername(), passwordEncoder.encode(user.getPassword()), User.Role.USER); // change to ADMIN for admin
-    userRepository.save(newUser);
-    return HttpStatus.CREATED.toString();
+
     //return newUser;
   }
 
