@@ -78,9 +78,9 @@ public class BookService {
   }
   
   @Transactional
-  public Book updateBook(Long isbn, Book newBook) throws Exception {
-    Optional<Book> bookToEdit = bookRepository.findBookByISBN(isbn);
-    if (bookToEdit.isPresent()) {
+  public Book updateBook(Optional<Book> bookToEdit, Book newBook) throws Exception {
+    
+    try {
       bookToEdit.get().setCategory(newBook.getCategory());
       bookToEdit.get().setTitle(newBook.getTitle());
       bookToEdit.get().setDescription(newBook.getDescription());
@@ -89,9 +89,24 @@ public class BookService {
       bookToEdit.get().setPublishers(newBook.getPublishers());
       bookToEdit.get().setStatus(newBook.getStatus());
       return bookToEdit.get();
-    }else{
-      //throw new Exception("Book does not exist!");
-      return null;
+    } catch (DataAccessException e) {
+      // Log the entire exception stack trace
+      // e.printStackTrace(); // This will show you the hierarchy of exceptions
+      
+      // Get the root cause
+      Throwable cause = e.getRootCause();
+      
+      // Traverse causes to find PSQLException
+      while (cause != null) {
+        if (cause instanceof PSQLException) {
+          String errorMessage = cause.getMessage();
+          throw new CustomException("Database Error: " + errorMessage, cause);
+        }
+        cause = cause.getCause(); // Move to the next cause
+      }
+      
+      // If no PSQLException found, throw a generic custom exception
+      throw new CustomException(e.getMessage(), e);
     }
   }
   

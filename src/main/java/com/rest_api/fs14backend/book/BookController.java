@@ -109,18 +109,29 @@ public class BookController {
 
   @PutMapping(value = "/{isbn}")
   public ResponseEntity<?> updateBook(@PathVariable Long isbn, @RequestBody BookDTO bookDTO) throws Exception {
-    UUID categoryId = bookDTO.getCategoryId();
-    Category category = categoryService.findById(categoryId);
-    List<UUID> authorIdList = bookDTO.getAuthorIdList();
-    List<Author> authorList = new ArrayList<>();
-    authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
-
-    Book book = bookMapper.newBook(bookDTO, category, authorList);
-    Book updatedBook= bookService.updateBook(isbn, book);
-    if(updatedBook!=null){
-      return ResponseEntity.ok(updatedBook);
-    }else{
-      return ResponseEntity.badRequest().body("Book with isbn " + isbn + " not Found!" );
+    Optional<Book> bookToEdit = bookService.findById(isbn);
+    
+    if(!bookToEdit.isPresent()){
+      return ResponseEntity.status(HttpStatus.CONFLICT).body("Book with isbn " + bookDTO.getISBN() + " does not exists!");
+    } else {
+      try {
+        UUID categoryId = bookDTO.getCategoryId();
+        Category category = categoryService.findById(categoryId);
+        List<UUID> authorIdList = bookDTO.getAuthorIdList();
+        List<Author> authorList = new ArrayList<>();
+        authorIdList.forEach(a -> authorList.add(authorService.findById(a)));
+    
+        Book book = bookMapper.newBook(bookDTO, category, authorList);
+        Book updatedBook= bookService.updateBook(bookToEdit, book);
+        if(updatedBook!=null){
+          return ResponseEntity.ok(updatedBook);
+        }else{
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                     .body("Failed to save the book.");
+        }
+      } catch (Exception ex) {
+        return new ResponseEntity<>("Failed to update book: " + ex.getMessage(), HttpStatus.FORBIDDEN);
+      }
     }
   }
 }
